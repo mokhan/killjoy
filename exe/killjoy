@@ -1,3 +1,32 @@
 #!/usr/bin/env ruby
 
+require "bundler/setup"
+$LOAD_PATH.unshift(File.expand_path("../lib", File.dirname(__FILE__)))
 require "killjoy"
+require "sneakers/runner"
+require "sneakers/metrics/statsd_metrics"
+require "sneakers/metrics/logging_metrics"
+require "logger"
+require "statsd-ruby"
+
+Sneakers.configure({
+  amqp: ENV.fetch("AMQP_URL", "amqp://guest:guest@localhost:5672"),
+  exchange: 'shard.killjoy',
+  exchange_type: 'x-modulus-hash',
+  daemonize: false,
+  log: STDOUT,
+  metrics: Sneakers::Metrics::LoggingMetrics.new,
+  #metrics: Sneakers::Metrics::StatsdMetrics.new(Statsd.new(ENV["STATSD_HOST"], 9125))
+  env: ENV.fetch('ENV', 'development'),
+  ack: true,
+  durable: true,
+  prefetch: 100,
+  #threads: 8,
+})
+Sneakers.logger.level = Logger::INFO
+
+Killjoy::Startup.new(Spank::Container.new).run do |container|
+  Spank::IOC.bind_to(container)
+  container.resolve(:session).execute("select * from system.hints;")
+  Sneakers::Runner.new([ Killjoy::Worker ]).run
+end

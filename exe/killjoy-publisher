@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+$LOAD_PATH << File.expand_path("../lib", File.dirname(__FILE__))
+require "killjoy"
+
+log_file = ENV.fetch("LOG_FILE", "tmp/nginx.log")
+
+Killjoy::Publisher.use do |publisher|
+  File.open(File.join(Dir.pwd, log_file)) do |file|
+    file.each_line do |line|
+      publisher.publish(line)
+    end
+  end
+end
