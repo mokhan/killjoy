@@ -1,0 +1,12 @@
+development:
+  hosts: [ '127.0.0.1' ]
+  port: 9042
+  keyspace: "killjoy_development"
+test:
+  hosts: <%= ENV.fetch("CASSANDRA_HOSTS", "127.0.0.1").split(" ") %>
+  port: 9042
+  keyspace: 'killjoy_test'
+production:
+  hosts: <%= ENV.fetch("CASSANDRA_HOSTS", "").split(" ") %>
+  port: 9042
+  keyspace: 'killjoy_production'
