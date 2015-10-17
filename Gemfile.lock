@@ -17,6 +17,7 @@ GEM
       amq-protocol (>= 2.0.0)
     cassandra-driver (2.1.5)
       ione (~> 1.2)
+    coderay (1.1.0)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
     descendants_tracker (0.0.4)
@@ -32,7 +33,12 @@ GEM
     ione (1.2.1)
     json (1.8.3)
     lz4-ruby (0.3.3)
+    method_source (0.8.2)
     minitest (5.8.1)
+    pry (0.10.3)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
     rake (10.4.2)
     rspec (3.3.0)
       rspec-core (~> 3.3.0)
@@ -50,6 +56,7 @@ GEM
     serverengine (1.5.11)
       sigdump (~> 0.2.2)
     sigdump (0.2.3)
+    slop (3.6.0)
     sneakers (2.3.4)
       bunny (~> 2.2.0)
       serverengine (~> 1.5.11)
@@ -78,6 +85,7 @@ DEPENDENCIES
   facter
   foreman
   lz4-ruby
+  pry
   rake
   rspec
   sneakers

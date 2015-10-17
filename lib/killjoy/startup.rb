@@ -37,10 +37,16 @@ module Killjoy
         x.resolve(:cluster).connect(keyspace)
       end.as_singleton
 
+      container.register(:writer) do |x|
+        session = x.resolve(:session)
+        writers = x.resolve_all(:cassandra_writer)
+        Killjoy::CassandraWriter.new(session, writers)
+      end
+
       [
         Killjoy::LogLineWriter
       ].each do |writer|
-        container.register(:writer) do |x|
+        container.register(:cassandra_writer) do |x|
           writer.new(x.resolve(:session))
         end
       end

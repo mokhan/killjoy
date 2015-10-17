@@ -6,6 +6,7 @@ gem "cassandra-driver"
 gem "facter"
 gem "foreman"        # for an easy deployment story with Upstart
 gem "lz4-ruby"
+gem "pry"
 gem "rake"
 gem "sneakers"
 gem "spank"
