@@ -22,7 +22,8 @@ module Killjoy
     end
 
     def expand(file)
-      configuration(file)
+      new_path = file.gsub(/\.erb/, '')
+      IO.write(new_path, expand_template(file))
     end
 
     private
@@ -33,7 +34,7 @@ module Killjoy
     end
 
     def expand_template(file)
-      ERB.new(File.read(file)).result
+      ERB.new(File.read(file)).result(binding)
     end
   end
 end

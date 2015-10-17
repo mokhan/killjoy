@@ -31,7 +31,7 @@ CREATE KEYSPACE #{configuration.keyspace} WITH REPLICATION = {
   task :migrate => :expand_templates do
     host = configuration.hosts.first
     Dir["db/migrate/*.cql"].each do |file|
-      sh "cqlsh #{host} -e #{File.expand_path(file)}"
+      sh "cqlsh #{host} -f #{File.expand_path(file)}"
     end
   end
 

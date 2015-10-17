@@ -1,0 +1,11 @@
+CREATE TABLE <%= keyspace %>.log_lines (
+  "id" timeuuid,
+  "http_status" bigint,
+  "http_verb" text,
+  "http_version" text,
+  "ipaddress" inet,
+  "timestamp" timestamp,
+  "url" text,
+  "user_agent" text,
+  PRIMARY KEY (ipaddress, id)
+);
