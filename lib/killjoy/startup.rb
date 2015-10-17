@@ -36,7 +36,9 @@ module Killjoy
         x.resolve(:cluster).connect(keyspace)
       end.as_singleton
 
-      [ ].each do |writer|
+      [
+        Killjoy::LogLineWriter
+      ].each do |writer|
         container.register(:writer) do |x|
           writer.new(x.resolve(:session))
         end
