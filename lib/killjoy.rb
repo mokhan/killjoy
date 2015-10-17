@@ -3,6 +3,7 @@ require "json"
 require "sneakers"
 require "spank"
 require "virtus"
+require "killjoy/nullable"
 
 require "killjoy/database_configuration"
 require "killjoy/log_line"

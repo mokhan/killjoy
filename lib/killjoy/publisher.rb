@@ -16,9 +16,7 @@ module Killjoy
     end
 
     def publish(line)
-      parsed_line = parser.parse(line)
-      routing_key = routing_key_for(parsed_line)
-      exchange.publish(parsed_line.to_json, routing_key: routing_key)
+      parser.parse(line).publish_to(exchange)
     rescue => error
       puts [error.message, error.backtrace.first, line].inspect
     end
