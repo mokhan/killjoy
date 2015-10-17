@@ -4,7 +4,7 @@ require "bundler/setup"
 $LOAD_PATH << File.expand_path("../lib", File.dirname(__FILE__))
 require "killjoy"
 
-log_file = ENV.fetch("LOG_FILE", "tmp/nginx.log")
+log_file = ENV.fetch("LOG_FILE", "spec/fixtures/nginx.log")
 
 Killjoy::Publisher.use do |publisher|
   File.open(File.join(Dir.pwd, log_file)) do |file|
