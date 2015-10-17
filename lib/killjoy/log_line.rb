@@ -6,18 +6,11 @@ module Killjoy
       attributes.each do |attribute, value|
         self.send("#{attribute}=", value)
       end
+      @attributes = attributes
     end
 
     def to_json
-      JSON.generate({
-        timestamp: timestamp,
-        ipaddress: ipaddress,
-        url: url,
-        http_verb: http_verb,
-        http_version: http_version,
-        http_status: http_status,
-        user_agent: user_agent,
-      })
+      JSON.generate(@attributes)
     end
   end
 end
