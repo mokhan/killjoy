@@ -8,9 +8,6 @@ module Killjoy
       batch = batch_for(JSON.parse(message, symbolize_names: true))
       session.execute(batch)
       ack!
-    rescue Timeout::Error => error
-      log ["ERROR", error.message].inspect
-      requeue!
     end
 
     def session
@@ -27,7 +24,6 @@ module Killjoy
       session.batch do |batch|
         writers.each do |writer|
           writer.save(json) do |statement, parameters|
-            log "writing batch"
             batch.add(statement, parameters)
           end
         end
