@@ -1,5 +1,7 @@
 namespace :db do
+  require 'active_support/core_ext/string'
   require 'erb'
+  require 'fileutils'
   require 'yaml'
   require_relative '../database_configuration'
 
@@ -46,4 +48,12 @@ CREATE KEYSPACE #{configuration.keyspace} WITH REPLICATION = {
 
   desc "Reset cassandra keyspace"
   task :reset => [:drop, :create, :migrate]
+
+  desc 'generate migration'
+  task :generate_migration, [:name] do |task, arguments|
+    name = arguments[:name]
+    migration_time = DateTime.now.strftime("%Y%m%d%H%M%S")
+    migration_name = "#{migration_time}_#{name.parameterize}.cql.erb"
+    FileUtils.touch("db/migrate/#{migration_name}")
+  end
 end

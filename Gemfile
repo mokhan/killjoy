@@ -1,5 +1,6 @@
 source "https://rubygems.org"
 
+gem "activesupport"
 gem "bunny"
 gem "cassandra-driver"
 gem "foreman"        # for an easy deployment story with Upstart
