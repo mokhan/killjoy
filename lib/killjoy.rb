@@ -7,6 +7,7 @@ require "spank"
 require "virtus"
 
 require "killjoy/after_fork"
+require "killjoy/async_consumer"
 require "killjoy/cassandra_db"
 require "killjoy/cassandra_writer"
 require "killjoy/consumer"

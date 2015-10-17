@@ -9,7 +9,11 @@ module Killjoy
 
     def write(message)
       batch = batch_for(message)
-      session.execute(batch)
+      if ENV['ASYNC'] == 'true'
+        session.execute_async(batch)
+      else
+        session.execute(batch)
+      end
     end
 
     private

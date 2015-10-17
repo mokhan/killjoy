@@ -11,6 +11,8 @@ require "statsd-ruby"
 
 cpus = Facter.value('processors')['count'].to_i
 
+run_asynchronously = ENV["ASYNC"] == 'true'
+
 Sneakers.configure({
   amqp: ENV.fetch("AMQP_URL", "amqp://guest:guest@localhost:5672"),
   exchange: 'shard.killjoy',
@@ -22,7 +24,7 @@ Sneakers.configure({
   #timeout_job_after: 5,
   #workers: 1,
   env: ENV.fetch('ENV', 'development'),
-  ack: ENV["ASYNC"] != "true",
+  ack: run_asynchronously == false,
   durable: true,
   prefetch: cpus,
   threads: cpus,
@@ -31,4 +33,8 @@ Sneakers.configure({
   }
 })
 Sneakers.logger.level = Logger::INFO
-Sneakers::Runner.new([ Killjoy::Consumer ]).run
+if run_asynchronously
+  Sneakers::Runner.new([ Killjoy::AsyncConsumer ]).run
+else
+  Sneakers::Runner.new([ Killjoy::Consumer ]).run
+end
