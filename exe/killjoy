@@ -9,6 +9,26 @@ require "sneakers/metrics/logging_metrics"
 require "logger"
 require "statsd-ruby"
 
+class BeforeFork
+  def call
+    puts "BEFORE FORK #{Process.pid}"
+  rescue => error
+    puts [error.message, error.backtrace].inspect
+  end
+end
+
+class AfterFork
+  def call
+    puts "AFTER FORK #{Process.pid}"
+    Killjoy::Startup.new(Spank::Container.new).run do |container|
+      Spank::IOC.bind_to(container)
+      Spank::IOC.resolve(:session).execute("select * from system.hints;")
+    end
+  rescue => error
+    puts [error.message, error.backtrace].inspect
+  end
+end
+
 Sneakers.configure({
   amqp: ENV.fetch("AMQP_URL", "amqp://guest:guest@localhost:5672"),
   exchange: 'shard.killjoy',
@@ -20,13 +40,14 @@ Sneakers.configure({
   env: ENV.fetch('ENV', 'development'),
   ack: true,
   durable: true,
-  prefetch: 100,
-  #threads: 8,
+  #timeout_job_after: 5,
+  prefetch: 10,
+  threads: 10,
+  workers: 1,
+  hooks: {
+    after_fork: AfterFork.new,
+    before_fork: BeforeFork.new,
+  }
 })
 Sneakers.logger.level = Logger::INFO
-
-Killjoy::Startup.new(Spank::Container.new).run do |container|
-  Spank::IOC.bind_to(container)
-  container.resolve(:session).execute("select * from system.hints;")
-  Sneakers::Runner.new([ Killjoy::Worker ]).run
-end
+Sneakers::Runner.new([ Killjoy::Consumer ]).run

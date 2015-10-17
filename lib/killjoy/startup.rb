@@ -17,6 +17,7 @@ module Killjoy
       end.as_singleton
 
       container.register(:cluster) do |x|
+        puts ["PROCESS", Process.pid].inspect
         configuration = x.resolve(:cassandra_configuration)
         ::Cassandra.cluster(
           compression: :lz4,

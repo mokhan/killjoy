@@ -1,15 +1,16 @@
 module Killjoy
-  class Worker
+  class Consumer
     include Sneakers::Worker
     from_queue "sharding: shard.killjoy - rabbit@localhost - #{ENV.fetch("RMQ_SHARD", "1")}"
 
     def work(message)
-      puts ['thread', Thread.current.object_id].inspect
+      log ["session:", session.object_id].inspect
       batch = batch_for(JSON.parse(message, symbolize_names: true))
       session.execute(batch)
       ack!
-    rescue => error
-      puts ["ERROR", error.message, error.backtrace].inspect
+    rescue Timeout::Error => error
+      log ["ERROR", error.message].inspect
+      requeue!
     end
 
     def session
@@ -26,11 +27,15 @@ module Killjoy
       session.batch do |batch|
         writers.each do |writer|
           writer.save(json) do |statement, parameters|
-            puts "writing batch"
+            log "writing batch"
             batch.add(statement, parameters)
           end
         end
       end
+    end
+
+    def log(messages)
+      worker_trace [Thread.current.object_id, messages].flatten.inspect
     end
   end
 end
