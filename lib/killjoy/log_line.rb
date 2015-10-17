@@ -1,16 +1,16 @@
 module Killjoy
   class LogLine
-    attr_accessor :timestamp, :ipaddress, :url, :http_verb, :http_version, :http_status, :user_agent
-
-    def initialize(attributes = {})
-      attributes.each do |attribute, value|
-        self.send("#{attribute}=", value)
-      end
-      @attributes = attributes
-    end
+    include Virtus.model
+    attribute :http_status, Integer
+    attribute :http_verb, String
+    attribute :http_version, String
+    attribute :ipaddress, String
+    attribute :timestamp, Integer
+    attribute :url, String
+    attribute :user_agent, String
 
     def to_json
-      JSON.generate(@attributes)
+      JSON.generate(attributes)
     end
   end
 end

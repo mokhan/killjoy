@@ -2,6 +2,7 @@ require "cassandra"
 require "json"
 require "sneakers"
 require "spank"
+require "virtus"
 
 require "killjoy/database_configuration"
 require "killjoy/log_line"

@@ -8,6 +8,7 @@ gem "rake"
 gem "sneakers"
 gem "spank"
 gem "statsd-ruby"    # using statsd with Sneakers::Metrics
+gem "virtus"
 
 group :test, :development do
   gem "rspec"
