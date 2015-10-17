@@ -1,36 +1,18 @@
-require 'json'
-
 module Killjoy
-  class LogLine
-    attr_accessor :timestamp, :ipaddress, :url, :http_verb, :http_version, :http_status, :user_agent
-
-    def to_json
-      JSON.generate({
-        timestamp: timestamp,
-        ipaddress: ipaddress,
-        url: url,
-        http_verb: http_verb,
-        http_version: http_version,
-        http_status: http_status,
-        user_agent: user_agent,
-      })
-    end
-  end
-
   class LogParser
     def parse(line)
       regex = /^(\d{2,3}.\d{1,3}.\d{1,3}.\d{1,3}) - - \[(.*)\] "(\S*|\S* \/\S* \S*)" (\d{3}) (\d*) "(\S*)" "([^"]*)"$/
       matches = line.match(regex)
 
-      LogLine.new.tap do |model|
-        model.timestamp = timestamp_from(matches.captures[1])
-        model.ipaddress = matches.captures[0]
-        model.url = url_from(matches.captures[2])
-        model.http_verb = http_verb_from(matches.captures[2])
-        model.http_version = http_version_from(matches.captures[2])
-        model.http_status = matches.captures[3].to_i
-        model.user_agent = matches.captures[6]
-      end
+      LogLine.new(
+        http_status: matches.captures[3].to_i,
+        http_verb: http_verb_from(matches.captures[2]),
+        http_version: http_version_from(matches.captures[2]),
+        ipaddress: matches.captures[0],
+        timestamp: timestamp_from(matches.captures[1]),
+        url: url_from(matches.captures[2]),
+        user_agent: matches.captures[6],
+      )
     end
 
     private

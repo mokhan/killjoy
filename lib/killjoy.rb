@@ -1,8 +1,10 @@
 require "cassandra"
+require "json"
 require "sneakers"
 require "spank"
 
 require "killjoy/database_configuration"
+require "killjoy/log_line"
 require "killjoy/log_parser"
 require "killjoy/publisher"
 require "killjoy/startup"
