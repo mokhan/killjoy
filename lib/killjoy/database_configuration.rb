@@ -5,7 +5,7 @@ module Killjoy
   class DatabaseConfiguration
     attr_reader :environment
 
-    def initialize(environment = ENV.fetch("ENV", "development"))
+    def initialize(environment: ENV.fetch("ENV", "development"))
       @environment = environment
     end
 

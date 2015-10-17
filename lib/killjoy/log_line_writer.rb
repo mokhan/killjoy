@@ -32,7 +32,6 @@ VALUES (
     end
 
     def save(json)
-      puts ["SAVING", json].inspect
       yield statement, parameters_for(json)
     end
 

@@ -8,3 +8,4 @@
 /tmp/
 .vagrant
 *.cql
+spec/examples.txt
