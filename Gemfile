@@ -3,6 +3,7 @@ source "https://rubygems.org"
 gem "activesupport"
 gem "bunny"
 gem "cassandra-driver"
+gem "facter"
 gem "foreman"        # for an easy deployment story with Upstart
 gem "lz4-ruby"
 gem "rake"

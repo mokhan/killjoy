@@ -1,9 +1,10 @@
 require "cassandra"
+require "facter"
 require "json"
+require "killjoy/nullable"
 require "sneakers"
 require "spank"
 require "virtus"
-require "killjoy/nullable"
 
 require "killjoy/cassandra_db"
 require "killjoy/consumer"

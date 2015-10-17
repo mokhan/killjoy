@@ -37,13 +37,13 @@ Sneakers.configure({
   log: STDOUT,
   metrics: Sneakers::Metrics::LoggingMetrics.new,
   #metrics: Sneakers::Metrics::StatsdMetrics.new(Statsd.new(ENV["STATSD_HOST"], 9125))
+  #timeout_job_after: 5,
+  #workers: 1,
   env: ENV.fetch('ENV', 'development'),
   ack: true,
   durable: true,
-  #timeout_job_after: 5,
-  prefetch: 10,
-  threads: 10,
-  workers: 1,
+  prefetch: Facter.value('processors')['count'].to_i,
+  threads: Facter.value('processors')['count'].to_i,
   hooks: {
     after_fork: AfterFork.new,
     before_fork: BeforeFork.new,
