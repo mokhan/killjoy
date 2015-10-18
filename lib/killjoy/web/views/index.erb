@@ -1,0 +1,27 @@
+<h1>Logs</h1>
+<table>
+  <thead>
+    <tr>
+      <th>IP Address</th>
+      <th>Http Status</th>
+      <th>Http Verb</th>
+      <th>Http Version</th>
+      <th>Timestamp</th>
+      <th>Url</th>
+      <th>User Agent</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @logs.each do |log| %>
+      <tr>
+        <td><%= log.ipaddress %></td>
+        <td><%= log.http_status %></td>
+        <td><%= log.http_verb %></td>
+        <td><%= log.http_version %></td>
+        <td><%= log.timestamp %></td>
+        <td><%= log.url %></td>
+        <td><%= log.user_agent %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

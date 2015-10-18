@@ -12,6 +12,7 @@ Vagrant.configure(2) do |config|
   config.vm.network "forwarded_port", guest: 9042, host: 9042
   config.vm.network "forwarded_port", guest: 9125, host: 9125
   config.vm.network "forwarded_port", guest: 8888, host: 8888
+  config.vm.network "forwarded_port", guest: 9292, host: 9292
   config.vm.provision :chef_apply do |chef|
     chef.recipe = File.read("config/chef_apply.rb")
   end
