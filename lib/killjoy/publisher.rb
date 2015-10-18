@@ -15,10 +15,8 @@ module Killjoy
       publisher.dispose
     end
 
-    def publish(line)
-      parser.parse(line).publish_to(exchange)
-    rescue => error
-      puts [error.message, error.backtrace.first, line].inspect
+    def publish(message)
+      message.publish_to(exchange)
     end
 
     def dispose

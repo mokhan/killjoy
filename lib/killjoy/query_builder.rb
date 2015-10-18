@@ -48,6 +48,12 @@ module Killjoy
       @results.each(&block)
     end
 
+    def map_as(model)
+      map do |row|
+        model.new(row)
+      end
+    end
+
     private
 
     def run

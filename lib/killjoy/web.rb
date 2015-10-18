@@ -13,8 +13,7 @@ end
 get '/' do
   @logs = Killjoy::CassandraDb
     .from(:log_lines)
-    .limit(100)
-    .map { |x| Killjoy::LogLine.new(x) }
+    .map_as(Killjoy::LogLine)
   erb :index
 end
 
@@ -22,8 +21,7 @@ get '/ip/:ipaddress' do
   @logs = Killjoy::CassandraDb
     .from(:log_lines)
     .where(ipaddress: IPAddr.new(params['ipaddress']))
-    .limit(100)
-    .map { |x| Killjoy::LogLine.new(x) }
+    .map_as(Killjoy::LogLine)
   erb :index
 end
 
