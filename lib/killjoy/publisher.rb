@@ -2,7 +2,7 @@ module Killjoy
   class Publisher
     attr_reader :exchange_name, :exchange_type, :parser
 
-    def initialize(exchange_name = "shard.killjoy", exchange_type = 'x-modulus-hash')
+    def initialize(exchange_name = "killjoy", exchange_type = 'x-modulus-hash')
       @exchange_name = exchange_name
       @exchange_type = exchange_type
       @parser = LogParser.new
@@ -34,12 +34,7 @@ module Killjoy
     end
 
     def configuration
-      {
-        host: ENV.fetch("RMQ_HOST", "localhost"),
-        password: ENV.fetch("RMQ_PASSWORD", "guest"),
-        port: ENV.fetch("RMQ_PORT", 5672).to_i,
-        username: ENV.fetch("RMQ_USERNAME", "guest"),
-      }
+      ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672")
     end
 
     def channel
@@ -48,11 +43,6 @@ module Killjoy
 
     def exchange
       @exchange ||= channel.exchange(exchange_name, durable: true, type: exchange_type)
-    end
-
-    #"http_status.ip.unix_timestamp"
-    def routing_key_for(line)
-      "#{line.http_status}.#{line.ipaddress}.#{line.timestamp}"
     end
   end
 end

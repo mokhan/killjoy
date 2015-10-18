@@ -14,15 +14,15 @@ cpus = Facter.value('processors')['count'].to_i
 run_asynchronously = ENV["ASYNC"] == 'true'
 
 Sneakers.configure({
-  amqp: ENV.fetch("AMQP_URL", "amqp://guest:guest@localhost:5672"),
-  exchange: 'shard.killjoy',
+  amqp: ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672"),
+  exchange: 'killjoy',
   exchange_type: 'x-modulus-hash',
   daemonize: false,
   log: STDOUT,
   metrics: Sneakers::Metrics::LoggingMetrics.new,
   #metrics: Sneakers::Metrics::StatsdMetrics.new(Statsd.new(ENV["STATSD_HOST"], 9125))
   #timeout_job_after: 5,
-  #workers: 1,
+  workers: 16,
   env: ENV.fetch('ENV', 'development'),
   ack: run_asynchronously == false,
   durable: true,
@@ -32,7 +32,7 @@ Sneakers.configure({
     after_fork: Killjoy::AfterFork.new,
   }
 })
-Sneakers.logger.level = Logger::INFO
+Sneakers.logger.level = Logger::WARN
 if run_asynchronously
   Sneakers::Runner.new([ Killjoy::AsyncConsumer ]).run
 else
