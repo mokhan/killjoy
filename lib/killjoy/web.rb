@@ -1,5 +1,11 @@
-require 'sinatra'
 require 'killjoy'
+require 'sinatra'
+
+helpers do
+  def h(text)
+    Rack::Utils.escape_html(text)
+  end
+end
 
 set :bind, '0.0.0.0'
 set :port, 9292
@@ -26,5 +32,16 @@ get '/ip/:ipaddress' do
 end
 
 get '/ping' do
+  message = Killjoy::LogLine.new(
+    http_status: 200,
+    http_verb: request["REQUEST_METHOD"],
+    http_version: request["SERVER_PROTOCOL"],
+    ipaddress: request["REMOTE_HOST"],
+    timestamp: DateTime.now.to_time.to_i,
+    url: request["PATH_INFO"],
+    user_agent: request["HTTP_USER_AGENT"],
+  )
+  Killjoy::Publisher.new.publish(message)
+
   "Hello World!"
 end

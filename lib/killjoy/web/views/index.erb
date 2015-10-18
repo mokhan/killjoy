@@ -17,10 +17,10 @@
         <td><a href="/ip/<%= log.ipaddress %>"><%= log.ipaddress %></a></td>
         <td><%= log.http_status %></td>
         <td><%= log.http_verb %></td>
-        <td><%= log.url %></td>
-        <td><%= log.http_version %></td>
+        <td><%= h log.url %></td>
+        <td><%= h log.http_version %></td>
         <td><%= log.timestamp %></td>
-        <td><%= log.user_agent %></td>
+        <td><%= h log.user_agent %></td>
       </tr>
     <% end %>
   </tbody>
