@@ -1,8 +1,10 @@
 module Killjoy
   class LogLine
+    include Virtus.model
+    include Queryable
+
     NULL = Nullable.new
 
-    include Virtus.model
     attribute :http_status, Integer
     attribute :http_verb, String
     attribute :http_version, String

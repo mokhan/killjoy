@@ -1,11 +1,6 @@
 require 'killjoy'
 require 'sinatra'
-
-helpers do
-  def h(text)
-    Rack::Utils.escape_html(text)
-  end
-end
+require 'tilt/erb'
 
 set :bind, '0.0.0.0'
 set :port, 9292
@@ -16,18 +11,20 @@ Killjoy::Startup.new(Spank::Container.new).run do |container|
   Spank::IOC.resolve(:session).execute("select * from system.hints;")
 end
 
+helpers do
+  def h(text)
+    Rack::Utils.escape_html(text)
+  end
+end
+
 get '/' do
-  @logs = Killjoy::CassandraDb
-    .from(:log_lines)
-    .map_as(Killjoy::LogLine)
+  @logs = Killjoy::LogLine.all
   erb :index
 end
 
 get '/ip/:ipaddress' do
-  @logs = Killjoy::CassandraDb
-    .from(:log_lines)
-    .where(ipaddress: IPAddr.new(params['ipaddress']))
-    .map_as(Killjoy::LogLine)
+  @ipaddress = IPAddr.new(params['ipaddress'])
+  @logs = Killjoy::LogLine.all.where(ipaddress: @ipaddress)
   erb :index
 end
 

@@ -8,6 +8,11 @@ module Killjoy
       @criteria = []
     end
 
+    def map_using(mapper)
+      @mapper = mapper
+      self
+    end
+
     def where(options)
       options.each do |(column, value)|
         @criteria << {
@@ -21,9 +26,9 @@ module Killjoy
     def contains(options)
       options.each do |(column, value)|
         @criteria << {
-        cql: "AND #{column} CONTAINS :#{column}",
-        binding: [column.to_sym, value]
-      }
+          cql: "AND #{column} CONTAINS :#{column}",
+          binding: [column.to_sym, value]
+        }
       end
       self
     end
@@ -44,14 +49,8 @@ module Killjoy
     end
 
     def each(&block)
-      @results ||= run
+      @results ||= @mapper ? run.map { |x| @mapper.new(x) } : run
       @results.each(&block)
-    end
-
-    def map_as(model)
-      map do |row|
-        model.new(row)
-      end
     end
 
     private
