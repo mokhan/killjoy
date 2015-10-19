@@ -21,6 +21,12 @@ module Killjoy
       exchange.publish(to_json, routing_key: routing_key)
     end
 
+    class << self
+      def from_ip(ipaddress)
+        all.where(ipaddress: ipaddress)
+      end
+    end
+
     private
 
     def routing_key

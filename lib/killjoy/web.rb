@@ -24,7 +24,7 @@ end
 
 get '/ip/:ipaddress' do
   @ipaddress = IPAddr.new(params['ipaddress'])
-  @logs = Killjoy::LogLine.all.where(ipaddress: @ipaddress)
+  @logs = Killjoy::LogLine.from_ip(@ipaddress)
   erb :index
 end
 
