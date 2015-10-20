@@ -22,7 +22,7 @@ Sneakers.configure({
   metrics: Sneakers::Metrics::LoggingMetrics.new,
   #metrics: Sneakers::Metrics::StatsdMetrics.new(Statsd.new(ENV["STATSD_HOST"], 9125))
   #timeout_job_after: 5,
-  workers: 16,
+  workers: 4,
   env: ENV.fetch('ENV', 'development'),
   ack: run_asynchronously == false,
   durable: true,

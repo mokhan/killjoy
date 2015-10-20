@@ -16,8 +16,9 @@ namespace :rabbitmq do
 
   desc "create sharded exchange."
   task :create do
+    shards = ENV.fetch("RMQ_SHARDS", 4)
     sh "rabbitmqadmin declare exchange --vhost=/ name=killjoy type=x-modulus-hash"
-    sh "sudo rabbitmqctl set_policy killjoy-shard \"^killjoy$\" '{\"shards-per-node\": 4, \"routing-key\": \"#\"}' --apply-to exchanges"
+    sh "sudo rabbitmqctl set_policy killjoy-shard \"^killjoy$\" '{\"shards-per-node\": #{shards}, \"routing-key\": \"#\"}' --apply-to exchanges"
   end
 
   desc "delete sharded exchange."

@@ -38,10 +38,11 @@ VALUES (
     private
 
     def parameters_for(json)
+      time = Time.at(json[:timestamp].to_i)
       json.merge(
-        id: @generator.now,
+        id: @generator.at(time),
         ipaddress: IPAddr.new(json[:ipaddress]),
-        timestamp: Time.at(json[:timestamp].to_i),
+        timestamp: time
       )
     end
   end
