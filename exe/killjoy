@@ -9,23 +9,14 @@ require "logger"
 require "serverengine"
 
 cpus = Facter.value('processors')['count'].to_i
-run_asynchronously = ENV["ASYNC"] == 'true'
 
 #Sneakers.configure({
 #log: STDOUT,
 #metrics: Sneakers::Metrics::LoggingMetrics.new,
 #env: ENV.fetch('ENV', 'development'),
-#ack: run_asynchronously == false,
-#durable: true,
 #threads: cpus,
 #})
 #Sneakers.logger.level = Logger::WARN
-#if run_asynchronously
-#Sneakers::Runner.new([ Killjoy::AsyncConsumer ]).run
-#else
-#Sneakers::Runner.new([ Killjoy::Consumer ]).run
-#end
-
 
 server = ServerEngine.create(Killjoy::Server, Killjoy::Worker) do
   {
@@ -36,9 +27,10 @@ server = ServerEngine.create(Killjoy::Server, Killjoy::Worker) do
     heartbeat: 2,
     pid_path: 'tmp/killjoy.pid',
     prefetch: cpus,
+    queue_shards: 4,
+    run_asynchronously: ENV["ASYNC"] == 'true',
     worker_type: 'process',
     workers: 4,
-    queue_shards: 4,
   }
 end
 server.run

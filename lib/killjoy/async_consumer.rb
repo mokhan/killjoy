@@ -7,11 +7,11 @@ module Killjoy
       @writers = writers
     end
 
-    def work(message, delivery_info)
+    def work(message)
       writes = writers.map do |writer|
-        writer.write(message)
+        writer.write(message.to_hash, async: true)
       end
-      process(::Cassandra::Future.all(writes), delivery_info.delivery_tag)
+      message.process(::Cassandra::Future.all(writes))
     end
 
     def bindings
@@ -20,23 +20,6 @@ module Killjoy
 
     def queue_name
       "sharding: killjoy - rabbit@localhost - #{shard}"
-    end
-
-    private
-
-    def process(future, tag)
-      future.on_success do |rows|
-        worker_trace("ACK: #{tag}")
-        channel.acknowledge(tag, false)
-      end
-      future.on_failure do |error|
-        worker_trace("NACK: #{tag}")
-        channel.reject(tag, false)
-      end
-    end
-
-    def channel
-      @channel ||= @queue.instance_variable_get("@channel")
     end
   end
 end

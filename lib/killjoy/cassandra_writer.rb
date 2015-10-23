@@ -7,12 +7,11 @@ module Killjoy
       @writers = cassandra_writers
     end
 
-    def write(message)
-      batch = batch_for(message)
-      if ENV['ASYNC'] == 'true'
-        session.execute_async(batch)
+    def write(message, async: false)
+      if async
+        session.execute_async(batch_for(message))
       else
-        session.execute(batch)
+        session.execute(batch_for(message))
       end
     end
 

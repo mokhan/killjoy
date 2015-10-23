@@ -9,9 +9,9 @@ module Killjoy
 
     def work(message)
       writers.each do |writer|
-        writer.write(message)
+        writer.write(message.to_hash)
       end
-      ack!
+      message.ack!
     end
 
     def bindings
@@ -21,11 +21,5 @@ module Killjoy
     def queue_name
       "sharding: killjoy - rabbit@localhost - #{shard}"
     end
-
-    private
-
-    def ack!; :ack end
-    def reject!; :reject; end
-    def requeue!; :requeue; end
   end
 end

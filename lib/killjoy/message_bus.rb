@@ -10,13 +10,10 @@ module Killjoy
       options = { manual_ack: true, block: false }
       create_queue(consumer).subscribe(options) do |info, metadata, raw_message|
         begin
-          message = JSON.parse(raw_message, symbolize_names: true)
-          if consumer.work(message)
-            ack(info)
-          else
-            reject(info)
-          end
+          message = Message.new(raw_message, info, channel)
+          consumer.work(message)
         rescue
+          message.reject! if message
           reject(info)
         end
       end
@@ -53,10 +50,6 @@ module Killjoy
         queue.bind(exchange, routing_key: binding)
       end
       queue
-    end
-
-    def ack(info)
-      channel.acknowledge(info.delivery_tag, false)
     end
 
     def reject(info, requeue = false)
