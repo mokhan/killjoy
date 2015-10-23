@@ -8,8 +8,11 @@ log_file = ENV.fetch("LOG_FILE", "spec/fixtures/nginx.log")
 
 parser = Killjoy::LogParser.new
 Killjoy::Publisher.use do |publisher|
-  File.open(File.join(Dir.pwd, log_file)) do |file|
-    file.each_line do |line|
+  log_file = File.join(Dir.pwd, log_file)
+  lines = File.readlines(log_file)
+
+  loop do
+    lines.each do |line|
       publisher.publish(parser.parse(line))
     end
   end

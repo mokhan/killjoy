@@ -1,18 +1,31 @@
 module Killjoy
   class Consumer
-    include Sneakers::Worker
-    from_queue "sharding: killjoy - rabbit@localhost - #{ENV.fetch("RMQ_SHARD", "1")}"
+    attr_reader :shard, :writers
 
-    def work(raw_message)
-      message = JSON.parse(raw_message, symbolize_names: true)
+    def initialize(writers, shard)
+      @shard = shard
+      @writers = writers
+    end
+
+    def work(message)
       writers.each do |writer|
         writer.write(message)
       end
       ack!
     end
 
-    def writers
-      @writers ||= Spank::IOC.resolve_all(:writer)
+    def bindings
+      [queue_name]
     end
+
+    def queue_name
+      "sharding: killjoy - rabbit@localhost - #{shard}"
+    end
+
+    private
+
+    def ack!; :ack end
+    def reject!; :reject; end
+    def requeue!; :requeue; end
   end
 end

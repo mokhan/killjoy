@@ -8,10 +8,10 @@ gem "foreman"        # for an easy deployment story with Upstart
 gem "lz4-ruby"
 gem "pry"
 gem "rake"
+gem "serverengine"
 gem "sinatra"
-gem "sneakers"
 gem "spank"
-gem "statsd-ruby"    # using statsd with Sneakers::Metrics
+gem "statsd-ruby"
 gem "virtus"
 
 group :test, :development do
