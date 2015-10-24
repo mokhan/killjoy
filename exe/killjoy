@@ -27,10 +27,10 @@ server = ServerEngine.create(Killjoy::Server, Killjoy::Worker) do
     heartbeat: 2,
     pid_path: 'tmp/killjoy.pid',
     prefetch: cpus,
-    queue_shards: 4,
+    queue_shards: ENV.fetch("RMQ_SHARDS", 4),
     run_asynchronously: ENV["ASYNC"] == 'true',
     worker_type: 'process',
-    workers: 4,
+    workers: ENV.fetch("RMQ_SHARDS", 4),
   }
 end
 server.run

@@ -11,7 +11,11 @@ module Killjoy
       create_queue(consumer).subscribe(options) do |info, metadata, raw_message|
         begin
           message = Message.new(raw_message, info, channel)
-          consumer.work(message)
+          if block_given?
+            yield message
+          else
+            consumer.work(message)
+          end
         rescue
           message.reject! if message
           reject(info)
