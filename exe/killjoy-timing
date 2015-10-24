@@ -3,54 +3,87 @@
 require "bundler/setup"
 $LOAD_PATH << File.expand_path("../lib", File.dirname(__FILE__))
 require "killjoy"
+require "benchmark/ips"
 
-messages_to_process = 1_000
+class Experiments
+  attr_reader :configuration, :messages_to_process, :writers, :lines
 
-Killjoy::AfterFork.new.call
-
-Killjoy::Publisher.use do |publisher|
-  parser = Killjoy::LogParser.new
-  log_file = ENV.fetch("LOG_FILE", "spec/fixtures/nginx.log")
-  log_file = File.join(Dir.pwd, log_file)
-  lines = File.readlines(log_file).take(messages_to_process)
-  lines.each do |line|
-    publisher.publish(parser.parse(line))
+  def initialize
+    Killjoy::AfterFork.new.call
+    @messages_to_process = 1_000
+    @writers = Spank::IOC.resolve_all(:writer)
+    cpus = Facter.value('processors')['count'].to_i
+    @configuration = {
+      amqp_uri: ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672"),
+      exchange: 'killjoy',
+      exchange_type: 'x-modulus-hash',
+      heartbeat: 2,
+      prefetch: cpus,
+    }
+    parser = Killjoy::LogParser.new
+    log_file = File.join(Dir.pwd, ENV.fetch("LOG_FILE", "spec/fixtures/nginx.log"))
+    @lines = File.readlines(log_file).take(messages_to_process).map do |x|
+      parser.parse(x)
+    end
   end
-end
 
-cpus = Facter.value('processors')['count'].to_i
-configuration = {
-  amqp_uri: ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672"),
-  exchange: 'killjoy',
-  exchange_type: 'x-modulus-hash',
-  heartbeat: 2,
-  prefetch: cpus,
-}
-writers = Spank::IOC.resolve_all(:writer)
-message_bus = Killjoy::MessageBus.new(configuration)
-queue = Queue.new
-mutex = Mutex.new
-resource = ConditionVariable.new
-
-4.times do |shard|
-  consumer = Killjoy::Consumer.new(writers, shard)
-  message_bus.run(consumer) do |message|
-    queue << message
-
-    message.ack!
-    #consumer.work(message)
-
-    puts "[#{Thread.current.object_id}] processed #{queue.size}"
-    if queue.size >= messages_to_process
-      mutex.synchronize do
-        resource.signal
+  def publish_messages
+    Killjoy::Publisher.use do |publisher|
+      lines.each do |line|
+        publisher.publish(line)
       end
     end
   end
+
+  def blocking_writes
+    run(Killjoy::Consumer)
+  end
+
+  def non_blocking_writes
+    run(Killjoy::AsyncConsumer)
+  end
+
+  private
+
+  def run(consumer_class)
+    publish_messages
+
+    queue = Queue.new
+    mutex = Mutex.new
+    resource = ConditionVariable.new
+    message_bus = Killjoy::MessageBus.new(configuration)
+
+    4.times do |shard|
+      consumer = consumer_class.new(writers, shard)
+      message_bus.run(consumer) do |message|
+        queue << message
+        consumer.work(message)
+
+        if queue.size == messages_to_process
+          mutex.synchronize do
+            resource.signal
+          end
+        end
+      end
+    end
+
+    mutex.synchronize do
+      resource.wait(mutex)
+      message_bus.stop
+    end
+  end
+
+
 end
 
-mutex.synchronize do
-  puts "[#{Thread.current.object_id}] heartbeat #{queue.size}"
-  resource.wait(mutex)
-  puts "FINISHED"
+experiments = Experiments.new
+
+Benchmark.ips do |x|
+  x.report("blocking writes") do
+    experiments.blocking_writes
+  end
+  x.report("non blocking writes") do
+    experiments.non_blocking_writes
+  end
+  x.compare!
 end

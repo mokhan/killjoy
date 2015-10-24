@@ -4,11 +4,12 @@ module Killjoy
 
     def initialize(configuration)
       @configuration = configuration
+      @subscriptions = Queue.new
     end
 
     def run(consumer)
       options = { manual_ack: true, block: false }
-      create_queue(consumer).subscribe(options) do |info, metadata, raw_message|
+      @subscriptions << create_queue(consumer).subscribe(options) do |info, metadata, raw_message|
         begin
           message = Message.new(raw_message, info, channel)
           if block_given?
@@ -20,6 +21,13 @@ module Killjoy
           message.reject! if message
           reject(info)
         end
+      end
+    end
+
+    def stop
+      while @subscriptions.size > 0
+        subscription = @subscriptions.deq
+        subscription.cancel
       end
     end
 
