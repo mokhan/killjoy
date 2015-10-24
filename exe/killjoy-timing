@@ -10,7 +10,7 @@ class Experiments
 
   def initialize
     Killjoy::AfterFork.new.call
-    @messages_to_process = 1_000
+    @messages_to_process = ENV.fetch("MESSAGES", 1_000).to_i
     @writers = Spank::IOC.resolve_all(:writer)
     cpus = Facter.value('processors')['count'].to_i
     @configuration = {
@@ -56,14 +56,15 @@ class Experiments
     4.times do |shard|
       consumer = consumer_class.new(writers, shard)
       message_bus.run(consumer) do |message|
-        queue << message
-        consumer.work(message)
-
-        if queue.size == messages_to_process
-          mutex.synchronize do
-            resource.signal
+        message.intercept(:ack) do
+          queue << message
+          if queue.size == messages_to_process
+            mutex.synchronize do
+              resource.signal
+            end
           end
         end
+        consumer.work(message)
       end
     end
 
@@ -72,13 +73,12 @@ class Experiments
       message_bus.stop
     end
   end
-
-
 end
 
 experiments = Experiments.new
 
 Benchmark.ips do |x|
+  x.config(time: 5, warmup: 2)
   x.report("blocking writes") do
     experiments.blocking_writes
   end
