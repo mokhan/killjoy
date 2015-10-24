@@ -63,6 +63,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
+    ruby-prof (0.15.8)
     serverengine (1.5.11)
       sigdump (~> 0.2.2)
     sigdump (0.2.3)
@@ -100,6 +101,7 @@ DEPENDENCIES
   pry-byebug
   rake
   rspec
+  ruby-prof
   serverengine
   sinatra
   spank
