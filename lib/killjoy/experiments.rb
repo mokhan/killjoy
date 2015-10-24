@@ -1,8 +1,9 @@
 module Killjoy
   class Experiments
-    attr_reader :configuration, :messages_to_process, :writers, :lines
+    attr_reader :configuration, :messages_to_process, :writers, :lines, :enable_profiler
 
-    def initialize
+    def initialize(enable_profiler: false)
+      @enable_profiler = enable_profiler
       Killjoy::AfterFork.new.call
       @messages_to_process = ENV.fetch("MESSAGES", 1_000).to_i
       @writers = Spank::IOC.resolve_all(:writer)
@@ -30,14 +31,28 @@ module Killjoy
     end
 
     def blocking_writes
-      run(Killjoy::Consumer)
+      profile('tmp/stackprof-cpu-blocking-writes.dump') do
+        run(Killjoy::Consumer)
+      end
     end
 
     def non_blocking_writes
-      run(Killjoy::AsyncConsumer)
+      profile('tmp/stackprof-cpu-non-blocking-writes.dump') do
+        run(Killjoy::AsyncConsumer)
+      end
     end
 
     private
+
+    def profile(filename)
+      if enable_profiler
+        StackProf.run(mode: :cpu, out: filename) do
+          yield
+        end
+      else
+        yield
+      end
+    end
 
     def run(consumer_class)
       publish_messages

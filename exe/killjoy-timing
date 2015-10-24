@@ -5,8 +5,10 @@ $LOAD_PATH << File.expand_path("../lib", File.dirname(__FILE__))
 require "killjoy"
 require "killjoy/experiments"
 require "benchmark/ips"
+require "stackprof"
 
-experiments = Killjoy::Experiments.new
+experiments = Killjoy::Experiments.new(enable_profiler: false)
+#experiments.non_blocking_writes
 
 Benchmark.ips do |x|
   x.config(time: 5, warmup: 2)

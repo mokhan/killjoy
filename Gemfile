@@ -20,4 +20,5 @@ group :test, :development do
   gem "pry-byebug"
   gem "rspec"
   gem "ruby-prof"
+  gem "stackprof"
 end
