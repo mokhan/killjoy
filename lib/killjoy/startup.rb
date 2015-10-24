@@ -17,18 +17,17 @@ module Killjoy
       end.as_singleton
 
       container.register(:cluster) do |x|
-        puts ["PROCESS", Process.pid].inspect
         configuration = x.resolve(:cassandra_configuration)
         ::Cassandra.cluster(
           compression: :lz4,
           consistency: :local_quorum,
           hosts: configuration.hosts,
-          logger: Logger.new($stdout),
+          #logger: Logger.new($stdout),
           nodelay: true,
           port: configuration.port,
           timeout: nil,
           idle_timeout: nil,
-          trace: true,
+          #trace: true,
         )
       end.as_singleton
 
