@@ -27,4 +27,15 @@ require "killjoy/version"
 require "killjoy/startup"
 
 module Killjoy
+  def self.logger
+    if @logger.nil?
+      Killjoy.logger = Logger.new(STDOUT)
+      Killjoy.logger.level = Logger::DEBUG
+    end
+    @logger
+  end
+
+  def self.logger=(logger)
+    @logger = logger
+  end
 end

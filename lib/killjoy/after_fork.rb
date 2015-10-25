@@ -11,7 +11,7 @@ module Killjoy
         Spank::IOC.resolve(:cluster).close
       end
     rescue => error
-      puts [error.message, error.backtrace].inspect
+      Killjoy.logger.error [error.message, error.backtrace].inspect
     end
   end
 end

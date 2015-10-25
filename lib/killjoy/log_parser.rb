@@ -21,7 +21,7 @@ module Killjoy
     def attempt(captures, index)
       captures[index]
     rescue StandardError => error
-      puts error.message
+      Killjoy.logger.error error.message
     end
 
     def timestamp_from(date)

@@ -11,12 +11,9 @@ require "serverengine"
 cpus = Facter.value('processors')['count'].to_i
 
 #Sneakers.configure({
-#log: STDOUT,
 #metrics: Sneakers::Metrics::LoggingMetrics.new,
-#env: ENV.fetch('ENV', 'development'),
 #threads: cpus,
 #})
-#Sneakers.logger.level = Logger::WARN
 
 server = ServerEngine.create(Killjoy::Server, Killjoy::Worker) do
   {
