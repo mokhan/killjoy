@@ -34,6 +34,10 @@ module Killjoy
       connection.close
     end
 
+    def publish(message)
+      message.publish_to(exchange)
+    end
+
     private
 
     def connection
