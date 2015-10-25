@@ -5,6 +5,7 @@ require "facter"
 require "json"
 require "killjoy/nullable"
 require "killjoy/queryable"
+require "logger"
 require "spank"
 require "virtus"
 
@@ -30,7 +31,7 @@ module Killjoy
   def self.logger
     if @logger.nil?
       Killjoy.logger = Logger.new(STDOUT)
-      Killjoy.logger.level = Logger::DEBUG
+      Killjoy.logger.level = Logger::INFO
     end
     @logger
   end

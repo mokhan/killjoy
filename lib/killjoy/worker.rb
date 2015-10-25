@@ -14,7 +14,7 @@ module Killjoy
         @message_bus.run(Killjoy::Consumer.new(writers, shard))
       end
       until @mutex.wait_for_set(config[:heartbeat])
-        logger.debug("Heartbeat: [#{Thread.object_id}]")
+        Killjoy.logger.debug("Heartbeat: [#{Thread.object_id}]")
       end
     end
 
