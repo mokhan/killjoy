@@ -6,7 +6,14 @@ module Killjoy
       @message_bus = MessageBus.new(configuration)
     end
 
-    def self.using(configuration)
+    def self.using
+      configuration = {
+        amqp_uri: ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672"),
+        exchange: 'killjoy',
+        exchange_type: 'x-modulus-hash',
+        heartbeat: 2,
+        prefetch: 8,
+      }
       publisher = new(configuration)
       yield publisher
     ensure

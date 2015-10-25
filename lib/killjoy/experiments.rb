@@ -14,6 +14,7 @@ module Killjoy
         exchange_type: 'x-modulus-hash',
         heartbeat: 2,
         prefetch: cpus,
+        queue_shards: ENV.fetch("RMQ_SHARDS", 4).to_i,
       }
       parser = Killjoy::LogParser.new
       log_file = File.join(Dir.pwd, ENV.fetch("LOG_FILE", "spec/fixtures/nginx.log"))
@@ -23,7 +24,7 @@ module Killjoy
     end
 
     def publish_messages
-      Killjoy::Publisher.use do |publisher|
+      Killjoy::Publisher.using do |publisher|
         lines.each do |line|
           publisher.publish(line)
         end
@@ -62,9 +63,9 @@ module Killjoy
       resource = ConditionVariable.new
       message_bus = Killjoy::MessageBus.new(configuration)
 
-      4.times do |shard|
+      configuration[:queue_shards].times do |shard|
         consumer = consumer_class.new(writers, shard)
-        message_bus.run(consumer) do |message|
+        message_bus.subscribe(consumer) do |message|
           message.intercept(:ack) do
             queue << message
             if queue.size == messages_to_process

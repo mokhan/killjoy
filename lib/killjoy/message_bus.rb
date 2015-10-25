@@ -7,7 +7,7 @@ module Killjoy
       @subscriptions = Queue.new
     end
 
-    def run(consumer)
+    def subscribe(consumer)
       options = { manual_ack: true, block: false }
       @subscriptions << create_queue(consumer).subscribe(options) do |info, metadata, raw_message|
         Thread.new do

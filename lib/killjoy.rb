@@ -31,7 +31,7 @@ module Killjoy
   def self.logger
     if @logger.nil?
       Killjoy.logger = Logger.new(STDOUT)
-      Killjoy.logger.level = Logger::INFO
+      Killjoy.logger.level = Logger::WARN
     end
     @logger
   end
