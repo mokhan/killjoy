@@ -10,7 +10,6 @@ require "serverengine"
 cpus = Facter.value('processors')['count'].to_i
 
 #Sneakers.configure({
-#metrics: Sneakers::Metrics::LoggingMetrics.new,
 #threads: cpus,
 #})
 

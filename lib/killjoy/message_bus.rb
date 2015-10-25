@@ -10,16 +10,18 @@ module Killjoy
     def run(consumer)
       options = { manual_ack: true, block: false }
       @subscriptions << create_queue(consumer).subscribe(options) do |info, metadata, raw_message|
-        begin
-          message = Message.new(raw_message, info, channel)
-          if block_given?
-            yield message
-          else
-            consumer.work(message)
+        Thread.new do
+          begin
+            message = Message.new(raw_message, info, channel)
+            if block_given?
+              yield message
+            else
+              consumer.work(message)
+            end
+          rescue
+            message.reject! if message
+            reject(info)
           end
-        rescue
-          message.reject! if message
-          reject(info)
         end
       end
     end
@@ -29,6 +31,7 @@ module Killjoy
         subscription = @subscriptions.deq
         subscription.cancel
       end
+      connection.close
     end
 
     private
@@ -36,7 +39,8 @@ module Killjoy
     def connection
       @connection ||= Bunny.new(
         configuration[:amqp_uri],
-        heartbeat: configuration[:heartbeat]
+        heartbeat: configuration[:heartbeat],
+        logger: Killjoy.logger
       ).tap do |connection|
         connection.start
       end

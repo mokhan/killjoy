@@ -26,7 +26,7 @@ module Killjoy
     private
 
     def connection
-      @connection ||= Bunny.new(configuration).tap do |connection|
+      @connection ||= Bunny.new(configuration, logger: Killjoy.logger).tap do |connection|
         connection.start
       end
     end

@@ -45,7 +45,7 @@ module Killjoy
     private
 
     def profile(filename)
-      if enable_profiler
+      if enable_profiler && RUBY_PLATFORM != "java"
         StackProf.run(mode: :cpu, out: filename) do
           yield
         end

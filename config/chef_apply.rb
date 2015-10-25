@@ -110,6 +110,7 @@ bash "install_ruby" do
 source /etc/profile.d/rbenv.sh
 rbenv install #{ruby_version}
 rbenv global #{ruby_version}
+rbenv install jruby-9.0.3.0
 EOH
 end
 
