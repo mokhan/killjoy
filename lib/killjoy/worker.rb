@@ -19,6 +19,7 @@ module Killjoy
     end
 
     def stop
+      @message_bus.stop
       @mutex.set!
     end
 
