@@ -23,11 +23,10 @@ module Killjoy
       end
     end
 
-    def publish_messages
-      Killjoy::Publisher.using do |publisher|
-        lines.each do |line|
-          publisher.publish(line)
-        end
+    def publish_messages(message_bus)
+      publisher = Killjoy::Publisher.new(message_bus)
+      lines.each do |line|
+        publisher.publish(line)
       end
     end
 
@@ -56,12 +55,12 @@ module Killjoy
     end
 
     def run(consumer_class)
-      publish_messages
+      message_bus = Killjoy::MessageBus.new(configuration)
+      publish_messages(message_bus)
 
       queue = Queue.new
       mutex = Mutex.new
       resource = ConditionVariable.new
-      message_bus = Killjoy::MessageBus.new(configuration)
 
       configuration[:queue_shards].times do |shard|
         consumer = consumer_class.new(writers, shard)

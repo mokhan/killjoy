@@ -5,31 +5,29 @@ module Killjoy
     def initialize(configuration)
       @configuration = configuration
       @subscriptions = Queue.new
+      @cpus = Facter.value('processors')['count'].to_i
     end
 
     def subscribe(consumer)
       options = { manual_ack: true, block: false }
       @subscriptions << create_queue(consumer).subscribe(options) do |info, metadata, raw_message|
-        Thread.new do
-          begin
-            message = Message.new(raw_message, info, channel)
-            if block_given?
-              yield message
-            else
-              consumer.work(message)
-            end
-          rescue
-            message.reject! if message
-            reject(info)
+        begin
+          message = Message.new(raw_message, info, channel)
+          if block_given?
+            yield message
+          else
+            consumer.work(message)
           end
+        rescue
+          message.reject! if message
+          reject(info)
         end
       end
     end
 
     def stop
       while @subscriptions.size > 0
-        subscription = @subscriptions.deq
-        subscription.cancel
+        @subscriptions.deq.cancel
       end
       connection.close
     end
@@ -51,13 +49,13 @@ module Killjoy
     end
 
     def channel
-      @channel ||= connection.create_channel.tap do |channel|
-        channel.prefetch(configuration[:prefetch])
+      @channel ||= connection.create_channel(nil, @cpus).tap do |x|
+        x.prefetch(configuration[:prefetch])
       end
     end
 
     def exchange
-      @exchange ||= channel.exchange(
+      channel.exchange(
         configuration[:exchange],
         durable: true,
         type: configuration[:exchange_type]

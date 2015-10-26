@@ -13,9 +13,10 @@ module Killjoy
       config[:queue_shards].times do |shard|
         @message_bus.subscribe(Killjoy::Consumer.new(writers, shard))
       end
-      until @mutex.wait_for_set(config[:heartbeat])
-        Killjoy.logger.debug("Heartbeat: [#{Thread.object_id}]")
-      end
+      @mutex.wait
+      #until @mutex.wait_for_set(config[:heartbeat])
+        #Killjoy.logger.debug("Heartbeat: [#{Thread.current.object_id}]")
+      #end
     end
 
     def stop

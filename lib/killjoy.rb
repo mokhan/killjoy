@@ -23,6 +23,7 @@ require "killjoy/message"
 require "killjoy/message_bus"
 require "killjoy/publisher"
 require "killjoy/query_builder"
+require "killjoy/thread_pool"
 require "killjoy/version"
 
 require "killjoy/startup"
@@ -30,8 +31,9 @@ require "killjoy/startup"
 module Killjoy
   def self.logger
     if @logger.nil?
-      Killjoy.logger = Logger.new(STDOUT)
-      Killjoy.logger.level = Logger::WARN
+      logger = Logger.new(STDOUT)
+      logger.level = Logger::WARN
+      Killjoy.logger = logger
     end
     @logger
   end

@@ -6,6 +6,7 @@ require "killjoy"
 require "killjoy/server"
 
 cpus = Facter.value('processors')['count'].to_i
+shards = ENV.fetch("RMQ_SHARDS", 4).to_i
 
 server = ServerEngine.create(Killjoy::Server, Killjoy::Worker) do
   {
@@ -16,10 +17,9 @@ server = ServerEngine.create(Killjoy::Server, Killjoy::Worker) do
     heartbeat: 2,
     pid_path: 'tmp/killjoy.pid',
     prefetch: cpus,
-    queue_shards: ENV.fetch("RMQ_SHARDS", 4),
-    run_asynchronously: ENV["ASYNC"] == 'true',
+    queue_shards: shards,
     worker_type: 'process',
-    workers: ENV.fetch("RMQ_SHARDS", 4),
+    workers: shards,
   }
 end
 server.run

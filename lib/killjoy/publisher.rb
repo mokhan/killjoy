@@ -2,19 +2,12 @@ module Killjoy
   class Publisher
     attr_reader :message_bus
 
-    def initialize(configuration)
-      @message_bus = MessageBus.new(configuration)
+    def initialize(message_bus)
+      @message_bus = message_bus
     end
 
-    def self.using
-      configuration = {
-        amqp_uri: ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672"),
-        exchange: 'killjoy',
-        exchange_type: 'x-modulus-hash',
-        heartbeat: 2,
-        prefetch: 8,
-      }
-      publisher = new(configuration)
+    def self.using(message_bus)
+      publisher = new(message_bus)
       yield publisher
     ensure
       publisher.dispose
