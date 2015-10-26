@@ -11,12 +11,9 @@ module Killjoy
       writers = Spank::IOC.resolve_all(:writer)
 
       config[:queue_shards].times do |shard|
-        @message_bus.subscribe(Killjoy::Consumer.new(writers, shard))
+        @message_bus.subscribe(Killjoy::AsyncConsumer.new(writers, shard))
       end
       @mutex.wait
-      #until @mutex.wait_for_set(config[:heartbeat])
-        #Killjoy.logger.debug("Heartbeat: [#{Thread.current.object_id}]")
-      #end
     end
 
     def stop

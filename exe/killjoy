@@ -5,7 +5,6 @@ $LOAD_PATH.unshift(File.expand_path("../lib", File.dirname(__FILE__)))
 require "killjoy"
 require "killjoy/server"
 
-cpus = Facter.value('processors')['count'].to_i
 shards = ENV.fetch("RMQ_SHARDS", 4).to_i
 
 server = ServerEngine.create(Killjoy::Server, Killjoy::Worker) do
@@ -14,9 +13,7 @@ server = ServerEngine.create(Killjoy::Server, Killjoy::Worker) do
     daemonize: false,
     exchange: 'killjoy',
     exchange_type: 'x-modulus-hash',
-    heartbeat: 2,
     pid_path: 'tmp/killjoy.pid',
-    prefetch: cpus,
     queue_shards: shards,
     worker_type: 'process',
     workers: shards,

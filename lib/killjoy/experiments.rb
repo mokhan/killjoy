@@ -7,13 +7,10 @@ module Killjoy
       Killjoy::AfterFork.new.call
       @messages_to_process = ENV.fetch("MESSAGES", 1_000).to_i
       @writers = Spank::IOC.resolve_all(:writer)
-      cpus = Facter.value('processors')['count'].to_i
       @configuration = {
         amqp_uri: ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672"),
         exchange: 'killjoy',
         exchange_type: 'x-modulus-hash',
-        heartbeat: 2,
-        prefetch: cpus,
         queue_shards: ENV.fetch("RMQ_SHARDS", 4).to_i,
       }
       parser = Killjoy::LogParser.new

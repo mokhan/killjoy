@@ -11,8 +11,6 @@ configuration = {
   amqp_uri: ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672"),
   exchange: 'killjoy',
   exchange_type: 'x-modulus-hash',
-  heartbeat: 2,
-  prefetch: 8,
 }
 message_bus = Killjoy::MessageBus.new(configuration)
 Killjoy::Publisher.using(message_bus) do |publisher|
