@@ -22,12 +22,12 @@ module Killjoy
           compression: :lz4,
           consistency: :local_quorum,
           hosts: configuration.hosts,
-          #logger: Logger.new($stdout),
+          logger: Killjoy.logger,
           nodelay: true,
           port: configuration.port,
           timeout: nil,
           idle_timeout: nil,
-          #trace: true,
+          trace: true,
         )
       end.as_singleton
 
