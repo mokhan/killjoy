@@ -10,15 +10,16 @@ gem "rake"
 gem "serverengine"
 gem "sinatra"
 gem "spank"
-gem "statsd-ruby"
 gem "virtus"
 
 group :test, :development do
+  platform :ruby do
+    gem "byebug"
+    gem "pry-byebug"
+    gem "ruby-prof"
+    gem "stackprof"
+  end
   gem "benchmark-ips"
-  gem "byebug"
   gem "pry"
-  gem "pry-byebug"
   gem "rspec"
-  gem "ruby-prof"
-  gem "stackprof"
 end

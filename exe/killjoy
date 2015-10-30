@@ -7,7 +7,7 @@ require "killjoy/server"
 
 shards = ENV.fetch("RMQ_SHARDS", 4).to_i
 
-server = ServerEngine.create(Killjoy::Server, Killjoy::Worker) do
+server = ServerEngine::Daemon.new(Killjoy::Server, Killjoy::Worker, {}) do
   {
     amqp_uri: ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672"),
     daemonize: false,
