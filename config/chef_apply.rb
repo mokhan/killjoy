@@ -11,18 +11,31 @@ enabled=1
 gpgcheck=0
 CONTENT
 end
+file "/etc/yum.repos.d/mongodb.repo" do
+  content <<-SCRIPT
+[mongodb]
+name=MongoDB Repository
+baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
+enabled=1
+gpgcheck=0
+SCRIPT
+end
 
 execute "rpm --import https://www.rabbitmq.com/rabbitmq-signing-key-public.asc"
 
-remote_file "/tmp/erlang-17.4-1.el6.x86_64.rpm" do
-  source "https://www.rabbitmq.com/releases/erlang/erlang-17.4-1.el6.x86_64.rpm"
+remote_file "/tmp/erlang-18.1-1.el7.centos.x86_64.rpm" do
+  source "https://www.rabbitmq.com/releases/erlang/erlang-18.1-1.el7.centos.x86_64.rpm"
 end
-execute "yum install -y /tmp/erlang-17.4-1.el6.x86_64.rpm"
+execute "yum install -y /tmp/erlang-18.1-1.el7.centos.x86_64.rpm" do
+  not_if "erl -eval 'erlang:display(erlang:system_info(otp_release)), halt().'  -noshell | grep 18"
+end
 
 remote_file "/tmp/rabbitmq-server-3.5.6-1.noarch.rpm" do
   source "https://github.com/rabbitmq/rabbitmq-server/releases/download/rabbitmq_v3_5_6/rabbitmq-server-3.5.6-1.noarch.rpm"
 end
-execute "yum install -y /tmp/rabbitmq-server-3.5.6-1.noarch.rpm"
+execute "yum install -y /tmp/rabbitmq-server-3.5.6-1.noarch.rpm" do
+  not_if "sudo rabbitmqctl status | grep '{rabbit,' | grep '3.5.6'"
+end
 
 package "epel-release"
 execute "yum clean all"
@@ -44,6 +57,7 @@ package %w{
   libxslt
   libxslt-devel
   make
+  mongodb-org
   openssl-devel
   opscenter
   patch
@@ -77,6 +91,7 @@ end
 
 [
   "cassandra",
+  "mongod",
   "rabbitmq-server",
 ].each do |service_name|
   service service_name do
@@ -106,6 +121,7 @@ end
 ruby_version = "2.2.3"
 bash "install_ruby" do
   user "root"
+  ignore_failure true
   code <<-EOH
 source /etc/profile.d/rbenv.sh
 rbenv install #{ruby_version}
