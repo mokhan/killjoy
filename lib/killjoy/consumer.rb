@@ -1,10 +1,9 @@
 module Killjoy
   class Consumer
-    attr_reader :shard, :writers
+    attr_reader :shard
 
-    def initialize(writers, shard)
+    def initialize(shard)
       @shard = shard
-      @writers = writers
     end
 
     def work(message)
