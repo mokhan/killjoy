@@ -11,8 +11,8 @@ module Killjoy
       writers = Spank::IOC.resolve_all(:writer)
 
       config[:queue_shards].times do |shard|
-        @message_bus.subscribe(Killjoy::Mongo::Consumer.new(writers, shard))
-        #@message_bus.subscribe(Killjoy::Consumer.new(writers, shard))
+        consumer = Cassandra::NonBlockingWritesConsumer.new(writers, shard)
+        @message_bus.subscribe(consumer)
       end
       @mutex.wait
     end

@@ -10,6 +10,7 @@ require "spank"
 require "virtus"
 
 require "killjoy/after_fork"
+require "killjoy/cassandra/blocking_writes_consumer"
 require "killjoy/cassandra/database_cleaner"
 require "killjoy/cassandra/database_configuration"
 require "killjoy/cassandra/db"

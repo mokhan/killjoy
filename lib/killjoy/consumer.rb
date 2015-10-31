@@ -8,10 +8,7 @@ module Killjoy
     end
 
     def work(message)
-      writers.each do |writer|
-        writer.write(message.to_hash)
-      end
-      message.ack!
+      raise "NotImplementedException"
     end
 
     def bindings

@@ -29,7 +29,7 @@ module Killjoy
 
     def blocking_writes
       profile('tmp/cassandra-cpu-blocking-writes.dump') do
-        run(Killjoy::Consumer)
+        run(Killjoy::Cassandra::BlockingWritesConsumer)
       end
     end
 

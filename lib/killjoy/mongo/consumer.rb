@@ -9,7 +9,6 @@ module Killjoy
       end
 
       def work(message)
-        Killjoy.logger.info "[#{Thread.current.object_id}] got message: #{message}"
         mongo_client[:log_lines].insert_one(message.to_hash)
         message.ack!
       end
