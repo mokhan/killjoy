@@ -32,6 +32,10 @@ module Killjoy
       channel.reject(info.delivery_tag, requeue)
     end
 
+    def to_s
+      to_hash
+    end
+
     private
 
     def run_interceptors_for(response_type)

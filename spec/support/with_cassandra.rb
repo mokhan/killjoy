@@ -1,5 +1,5 @@
 shared_context "with_cassandra" do
-  let(:configuration) { Killjoy::DatabaseConfiguration.new(environment: "test") }
+  let(:configuration) { Killjoy::Cassandra::DatabaseConfiguration.new(environment: "test") }
   let(:cluster) do
     ::Cassandra.cluster(
       #compression: :lz4,
@@ -16,6 +16,6 @@ shared_context "with_cassandra" do
   let(:session) { cluster.connect(configuration.keyspace) }
 
   before :each do
-    Killjoy::DatabaseCleaner.new(session, configuration).clean
+    Killjoy::Cassandra::DatabaseCleaner.new(session, configuration).clean
   end
 end

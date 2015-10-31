@@ -3,7 +3,6 @@ module Killjoy
     def call
       Killjoy::Startup.new(Spank::Container.new).run do |container|
         Spank::IOC.bind_to(container)
-        Spank::IOC.resolve(:session).execute("select * from system.hints;")
       end
 
       Signal.trap("TERM") do

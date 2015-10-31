@@ -3,10 +3,10 @@ namespace :db do
   require 'erb'
   require 'fileutils'
   require 'yaml'
-  require_relative '../database_configuration'
+  require_relative '../cassandra/database_configuration'
 
   def configuration
-    @configuration ||= Killjoy::DatabaseConfiguration.new
+    @configuration ||= Killjoy::Cassandra::DatabaseConfiguration.new
   end
 
   task :expand_templates do

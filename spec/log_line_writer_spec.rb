@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Killjoy::LogLineWriter do
+describe Killjoy::Cassandra::LogLineWriter do
   include_context 'with_cassandra'
-  subject { Killjoy::LogLineWriter.new(session) }
+  subject { Killjoy::Cassandra::LogLineWriter.new(session) }
 
   describe "#save" do
     let(:parser) { Killjoy::LogParser.new }

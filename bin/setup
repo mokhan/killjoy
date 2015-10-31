@@ -9,3 +9,4 @@ bundle exec rake rabbitmq:setup
 bundle exec rake rabbitmq:reset
 bundle exec rake db:reset
 ENV=test bundle exec rake db:reset
+bundle exec rake mongo:drop

@@ -13,7 +13,7 @@ module Killjoy
 
     def configure(container)
       container.register(:cassandra_configuration) do |x|
-        Killjoy::DatabaseConfiguration.new
+        Killjoy::Cassandra::DatabaseConfiguration.new
       end.as_singleton
 
       container.register(:cluster) do |x|
@@ -36,14 +36,20 @@ module Killjoy
         x.resolve(:cluster).connect(keyspace)
       end.as_singleton
 
+      container.register(:mongo_client) do |x|
+        connection_string = ENV.fetch("MONGO_CONNECTION_STRING", 'mongodb://127.0.0.1:27017/killjoy')
+        ::Mongo::Logger.logger = Killjoy.logger
+        ::Mongo::Client.new(connection_string)
+      end.as_singleton
+
       container.register(:writer) do |x|
         session = x.resolve(:session)
         writers = x.resolve_all(:cassandra_writer)
-        Killjoy::CassandraWriter.new(session, writers)
+        Killjoy::Cassandra::Writer.new(session, writers)
       end
 
       [
-        Killjoy::LogLineWriter
+        Killjoy::Cassandra::LogLineWriter
       ].each do |writer|
         container.register(:cassandra_writer) do |x|
           writer.new(x.resolve(:session))

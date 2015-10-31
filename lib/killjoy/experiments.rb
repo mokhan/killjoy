@@ -28,14 +28,20 @@ module Killjoy
     end
 
     def blocking_writes
-      profile('tmp/stackprof-cpu-blocking-writes.dump') do
+      profile('tmp/cassandra-cpu-blocking-writes.dump') do
         run(Killjoy::Consumer)
       end
     end
 
     def non_blocking_writes
-      profile('tmp/stackprof-cpu-non-blocking-writes.dump') do
-        run(Killjoy::AsyncConsumer)
+      profile('tmp/cassandra-cpu-non-blocking-writes.dump') do
+        run(Killjoy::Cassandra::NonBlockingWritesConsumer)
+      end
+    end
+
+    def mongo_writes
+      profile('tmp/mongo-cpu-non-blocking-writes.dump') do
+        run(Killjoy::Mongo::Consumer)
       end
     end
 

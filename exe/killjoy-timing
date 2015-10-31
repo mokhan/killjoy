@@ -16,11 +16,15 @@ experiments = Killjoy::Experiments.new(enable_profiler: false)
 
 Benchmark.ips do |x|
   x.config(time: 5, warmup: 2)
-  x.report("blocking writes") do
+  x.report("cassandra: blocking writes") do
     experiments.blocking_writes
   end
-  x.report("non blocking writes") do
+  x.report("cassandra:: non blocking writes") do
     experiments.non_blocking_writes
   end
+  x.report("mongo: writes") do
+    experiments.mongo_writes
+  end
+
   x.compare!
 end

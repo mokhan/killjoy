@@ -1,7 +1,7 @@
 module Killjoy
   class LogLine
     include Virtus.model
-    include Queryable
+    include Cassandra::Queryable
 
     NULL = Nullable.new
 
