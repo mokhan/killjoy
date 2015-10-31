@@ -1,6 +1,8 @@
 module Killjoy
   module Mongo
     class Consumer < Consumer
+      attr_reader :mongo_client
+
       def initialize(writers, shard)
         @mongo_client = Spank::IOC.resolve(:mongo_client)
         super(writers, shard)

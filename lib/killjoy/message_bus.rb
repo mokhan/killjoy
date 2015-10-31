@@ -18,7 +18,8 @@ module Killjoy
           else
             consumer.work(message)
           end
-        rescue
+        rescue => error
+          Killjoy.logger.error(error.message)
           message.reject! if message
           reject(info)
         end
