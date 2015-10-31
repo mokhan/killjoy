@@ -38,8 +38,7 @@ module Killjoy
 
       container.register(:mongo_client) do |x|
         connection_string = ENV.fetch("MONGO_CONNECTION_STRING", 'mongodb://127.0.0.1:27017/killjoy')
-        ::Mongo::Logger.logger = Killjoy.logger
-        ::Mongo::Client.new(connection_string)
+        ::Mongo::Client.new(connection_string, logger: Killjoy.logger)
       end.as_singleton
 
       container.register(:writer) do |x|
