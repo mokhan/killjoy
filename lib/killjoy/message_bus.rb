@@ -57,7 +57,7 @@ module Killjoy
     end
 
     def exchange
-      channel.exchange(
+      @exchange ||= channel.exchange(
         configuration.exchange,
         durable: true,
         type: configuration.exchange_type
