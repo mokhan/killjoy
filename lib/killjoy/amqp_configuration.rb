@@ -10,6 +10,14 @@ module Killjoy
       configuration['amqp_uri']
     end
 
+    def heartbeat
+      configuration['heartbeat'].to_i
+    end
+
+    def prefetch
+      configuration['prefetch'].to_i
+    end
+
     def exchange
       configuration['exchange']
     end

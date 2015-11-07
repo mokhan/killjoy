@@ -1,4 +1,9 @@
 namespace :rabbitmq do
+  require 'active_support/core_ext/string'
+  require 'erb'
+  require 'yaml'
+  require_relative '../amqp_configuration'
+
   desc 'setup rabbitmqadmin'
   task :setup do
     sh "wget http://127.0.0.1:15672/cli/rabbitmqadmin"
@@ -16,8 +21,11 @@ namespace :rabbitmq do
 
   desc "create sharded exchange."
   task :create do
-    shards = ENV.fetch("RMQ_SHARDS", 4)
-    sh "rabbitmqadmin declare exchange --vhost=/ name=killjoy type=x-modulus-hash"
+    configuration = Killjoy::AMQPConfiguration.new
+    exchange = configuration.exchange
+    exchange_type = configuration.exchange_type
+    shards = configuration.shards
+    sh "rabbitmqadmin declare exchange --vhost=/ name=#{exchange} type=#{exchange_type}"
     sh "sudo rabbitmqctl set_policy killjoy-shard \"^killjoy$\" '{\"shards-per-node\": #{shards}, \"routing-key\": \"#\"}' --apply-to exchanges"
   end
 

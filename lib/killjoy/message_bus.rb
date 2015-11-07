@@ -43,7 +43,7 @@ module Killjoy
     def connection
       @connection ||= Bunny.new(
         configuration.amqp_uri,
-        heartbeat: 2,
+        heartbeat: configuration.heartbeat,
         logger: Killjoy.logger
       ).tap do |connection|
         connection.start
@@ -52,7 +52,7 @@ module Killjoy
 
     def channel
       @channel ||= connection.create_channel(nil, @cpus).tap do |x|
-        x.prefetch(@cpus)
+        x.prefetch(configuration.prefetch)
       end
     end
 
