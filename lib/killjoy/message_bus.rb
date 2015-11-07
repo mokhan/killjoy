@@ -2,7 +2,7 @@ module Killjoy
   class MessageBus
     attr_reader :configuration
 
-    def initialize(configuration)
+    def initialize(configuration = AMQPConfiguration.new)
       @configuration = configuration
       @subscriptions = Queue.new
       @cpus = Facter.value('processors')['count'].to_i
@@ -10,7 +10,8 @@ module Killjoy
 
     def subscribe(consumer)
       options = { manual_ack: true, block: false }
-      @subscriptions << create_queue(consumer).subscribe(options) do |info, metadata, raw_message|
+      queue = create_queue(consumer)
+      subscription = queue.subscribe(options) do |info, metadata, raw_message|
         begin
           message = Message.new(raw_message, info, channel)
           if block_given?
@@ -20,10 +21,10 @@ module Killjoy
           end
         rescue => error
           Killjoy.logger.error(error.message)
-          message.reject! if message
-          reject(info)
+          message.reject!
         end
       end
+      @subscriptions << subscription
     end
 
     def stop
@@ -41,7 +42,7 @@ module Killjoy
 
     def connection
       @connection ||= Bunny.new(
-        configuration[:amqp_uri],
+        configuration.amqp_uri,
         heartbeat: 2,
         logger: Killjoy.logger
       ).tap do |connection|
@@ -57,9 +58,9 @@ module Killjoy
 
     def exchange
       channel.exchange(
-        configuration[:exchange],
+        configuration.exchange,
         durable: true,
-        type: configuration[:exchange_type]
+        type: configuration.exchange_type
       )
     end
 
@@ -69,10 +70,6 @@ module Killjoy
         queue.bind(exchange, routing_key: binding)
       end
       queue
-    end
-
-    def reject(info, requeue = false)
-      channel.reject(info.delivery_tag, requeue)
     end
   end
 end

@@ -10,6 +10,7 @@ Killjoy::Startup.new(Spank::Container.new).run do |container|
   Spank::IOC.bind_to(container)
   Spank::IOC.resolve(:session).execute("select * from system.hints;")
 end
+message_bus = Killjoy::MessageBus.new
 
 helpers do
   def h(text)
@@ -38,7 +39,7 @@ get '/ping' do
     url: request["PATH_INFO"],
     user_agent: request["HTTP_USER_AGENT"],
   )
-  Killjoy::Publisher.new.publish(message)
+  Killjoy::Publisher.new(message_bus).publish(message)
 
   "Hello World!"
 end

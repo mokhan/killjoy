@@ -56,12 +56,7 @@ module Killjoy
 
     def run
       queue_shards = ENV.fetch("RMQ_SHARDS", 4).to_i
-      configuration = {
-        amqp_uri: ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672"),
-        exchange: 'killjoy',
-        exchange_type: 'x-modulus-hash',
-      }
-      message_bus = MessageBus.new(configuration)
+      message_bus = MessageBus.new
       publish_messages(message_bus)
 
       queue = Queue.new

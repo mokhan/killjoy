@@ -1,6 +1,3 @@
-require 'erb'
-require 'yaml'
-
 module Killjoy
   module Cassandra
     class DatabaseConfiguration

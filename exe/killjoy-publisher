@@ -7,12 +7,7 @@ require "killjoy"
 log_file = ENV.fetch("LOG_FILE", "spec/fixtures/nginx.log")
 parser = Killjoy::LogParser.new
 
-configuration = {
-  amqp_uri: ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672"),
-  exchange: 'killjoy',
-  exchange_type: 'x-modulus-hash',
-}
-message_bus = Killjoy::MessageBus.new(configuration)
+message_bus = Killjoy::MessageBus.new
 Killjoy::Publisher.using(message_bus) do |publisher|
   log_file = File.join(Dir.pwd, log_file)
   lines = File.readlines(log_file)

@@ -5,18 +5,14 @@ $LOAD_PATH.unshift(File.expand_path("../lib", File.dirname(__FILE__)))
 require "killjoy"
 require "killjoy/server"
 
-shards = ENV.fetch("RMQ_SHARDS", 4).to_i
-
+configuration = Killjoy::AMQPConfiguration.new
 server = ServerEngine::Daemon.new(Killjoy::Server, Killjoy::Worker, {}) do
   {
-    amqp_uri: ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672"),
     daemonize: false,
-    exchange: 'killjoy',
-    exchange_type: 'x-modulus-hash',
     pid_path: 'tmp/killjoy.pid',
-    queue_shards: shards,
+    queue_shards: configuration.shards,
     worker_type: 'process',
-    workers: shards,
+    workers: configuration.shards,
   }
 end
 server.run

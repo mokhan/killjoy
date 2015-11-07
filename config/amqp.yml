@@ -1,0 +1,15 @@
+development:
+  amqp_uri: '<%= ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672") %>'
+  exchange: 'killjoy'
+  exchange_type: 'x-modulus-hash'
+  shards: <%= ENV.fetch("RMQ_SHARDS", 4).to_i %>
+test:
+  amqp_uri: '<%= ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672") %>'
+  exchange: 'killjoy'
+  exchange_type: 'x-modulus-hash'
+  shards: <%= ENV.fetch("RMQ_SHARDS", 4).to_i %>
+production:
+  amqp_uri: '<%= ENV.fetch("RABBITMQ_URL", "amqp://guest:guest@localhost:5672") %>'
+  exchange: 'killjoy'
+  exchange_type: 'x-modulus-hash'
+  shards: <%= ENV.fetch("RMQ_SHARDS", 4).to_i %>
