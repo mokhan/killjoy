@@ -12,6 +12,7 @@ gem "serverengine"
 gem "sinatra"
 gem "spank"
 gem "virtus"
+gem "poseidon"
 
 group :test, :development do
   platform :ruby do

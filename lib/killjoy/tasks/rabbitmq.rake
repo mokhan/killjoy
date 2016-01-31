@@ -2,7 +2,7 @@ namespace :rabbitmq do
   require 'active_support/core_ext/string'
   require 'erb'
   require 'yaml'
-  require_relative '../amqp_configuration'
+  require_relative '../rmq/amqp_configuration'
 
   desc 'setup rabbitmqadmin'
   task :setup do
