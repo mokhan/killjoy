@@ -11,7 +11,7 @@ gem "poseidon"
 gem "rake"
 gem "serverengine"
 gem "sinatra"
-gem "snappy"
+#gem "snappy"
 gem "spank"
 gem "virtus"
 
