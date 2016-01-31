@@ -2,7 +2,8 @@ module Killjoy
   module Worker
     def initialize
       @mutex = ServerEngine::BlockingFlag.new
-      @message_bus = Killjoy::MessageBus.new
+      #@message_bus = Killjoy::MessageBus.new
+      @message_bus = Killjoy::Kafka::MessageBus.new
     end
 
     def run

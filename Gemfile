@@ -7,12 +7,13 @@ gem "facter"
 gem "foreman"
 gem "lz4-ruby"
 gem "mongo"
+gem "poseidon"
 gem "rake"
 gem "serverengine"
 gem "sinatra"
+gem "snappy"
 gem "spank"
 gem "virtus"
-gem "poseidon"
 
 group :test, :development do
   platform :ruby do
