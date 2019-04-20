@@ -9,7 +9,7 @@ name=DataStax Repo for Apache Cassandra
 baseurl=http://rpm.datastax.com/community
 enabled=1
 gpgcheck=0
-CONTENT
+  CONTENT
 end
 file "/etc/yum.repos.d/mongodb.repo" do
   content <<-SCRIPT
@@ -18,7 +18,7 @@ name=MongoDB Repository
 baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
 enabled=1
 gpgcheck=0
-SCRIPT
+  SCRIPT
 end
 
 execute "rpm --import https://www.rabbitmq.com/rabbitmq-signing-key-public.asc"
@@ -35,6 +35,20 @@ remote_file "/tmp/rabbitmq-server-3.5.6-1.noarch.rpm" do
 end
 execute "yum install -y /tmp/rabbitmq-server-3.5.6-1.noarch.rpm" do
   not_if "sudo rabbitmqctl status | grep '{rabbit,' | grep '3.5.6'"
+end
+
+remote_file "/tmp/kafka_2.11-0.9.0.0.tgz" do
+  source "http://apache.mirror.iweb.ca/kafka/0.9.0.0/kafka_2.11-0.9.0.0.tgz"
+end
+
+bash "install_kafka" do
+  cwd "/tmp"
+  code <<-BASH
+  tar -xzvf kafka_2.11-0.9.0.0.tgz
+  mv kafka_2.11-0.9.0.0 /opt/
+  ln -s /opt/kafka_2.11-0.9.0.0 /opt/kafka
+  BASH
+  not_if { ::Dir.exist?("kafka_2.11-0.9.0.0") }
 end
 
 package "epel-release"
@@ -109,7 +123,7 @@ file "/etc/profile.d/rbenv.sh" do
 export RBENV_ROOT="/usr/local/rbenv"
 export PATH="/usr/local/rbenv/bin:$PATH"
 eval "$(rbenv init -)"
-CONTENT
+  CONTENT
 end
 
 directory "/usr/local/rbenv/plugins"
@@ -126,8 +140,8 @@ bash "install_ruby" do
 source /etc/profile.d/rbenv.sh
 rbenv install #{ruby_version}
 rbenv global #{ruby_version}
-rbenv install jruby-9.0.3.0
-EOH
+rbenv install jruby-9.0.5.0
+  EOH
 end
 
 bash "install_bundler" do

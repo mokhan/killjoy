@@ -12,7 +12,7 @@ server = ServerEngine::Daemon.new(Killjoy::Server, Killjoy::Worker, {}) do
     pid_path: 'tmp/killjoy.pid',
     queue_shards: configuration.shards,
     worker_type: 'process',
-    workers: configuration.shards,
+    workers: 1, # configuration.shards,
   }
 end
 server.run

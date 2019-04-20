@@ -42,6 +42,22 @@ module Killjoy
       end
     end
 
+    def kafka_cassandra_non_blocking_writes
+      profile('tmp/kafka-cassandra-cpu-non-blocking-writes.dump') do
+        run(Kafka::MessageBus.new, 1) do |shard|
+          Cassandra::NonBlockingWritesConsumer.new(writers, shard)
+        end
+      end
+    end
+
+    def kafka_mongo_writes
+      profile('tmp/kafka-mongo-cpu-non-blocking-writes.dump') do
+        run(Kafka::MessageBus.new, 1) do |shard|
+          Mongo::Consumer.new(@mongo_client, shard)
+        end
+      end
+    end
+
     private
 
     def profile(filename)
@@ -54,9 +70,10 @@ module Killjoy
       end
     end
 
-    def run
+    def run(
+      message_bus = MessageBus.new,
       queue_shards = ENV.fetch("RMQ_SHARDS", 4).to_i
-      message_bus = MessageBus.new
+    )
       publish_messages(message_bus)
 
       queue = Queue.new

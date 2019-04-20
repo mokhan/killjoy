@@ -25,6 +25,12 @@ Benchmark.ips do |x|
   x.report("mongo: writes") do
     experiments.mongo_writes
   end
+  x.report("kafka-mongo: writes") do
+    experiments.kafka_mongo_writes
+  end
+  x.report("kafka-cassandra: non blocking writes") do
+    experiments.kafka_cassandra_non_blocking_writes
+  end
 
   x.compare!
 end

@@ -7,7 +7,8 @@ require "killjoy"
 log_file = ENV.fetch("LOG_FILE", "spec/fixtures/nginx.log")
 parser = Killjoy::LogParser.new
 
-message_bus = Killjoy::MessageBus.new
+#message_bus = Killjoy::MessageBus.new
+message_bus = Killjoy::Kafka::MessageBus.new
 Killjoy::Publisher.using(message_bus) do |publisher|
   log_file = File.join(Dir.pwd, log_file)
   lines = File.readlines(log_file)
